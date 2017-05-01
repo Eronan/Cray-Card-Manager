@@ -99,6 +99,7 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
             this.openFile_Images = new System.Windows.Forms.OpenFileDialog();
+            this.openFile_Card = new System.Windows.Forms.OpenFileDialog();
             this.ManagerTabs.SuspendLayout();
             this.CardCreation.SuspendLayout();
             this.groupBox_CardText.SuspendLayout();
@@ -164,6 +165,7 @@
             this.button_LoadTemplate.TabIndex = 10;
             this.button_LoadTemplate.Text = "Load Template";
             this.button_LoadTemplate.UseVisualStyleBackColor = true;
+            this.button_LoadTemplate.Click += new System.EventHandler(this.button_LoadTemplate_Click);
             // 
             // button_OpenCard
             // 
@@ -173,6 +175,7 @@
             this.button_OpenCard.TabIndex = 9;
             this.button_OpenCard.Text = "Open Card";
             this.button_OpenCard.UseVisualStyleBackColor = true;
+            this.button_OpenCard.Click += new System.EventHandler(this.button_OpenCard_Click);
             // 
             // button_Save
             // 
@@ -900,6 +903,10 @@
             this.openFile_Images.Filter = "Image files (*.jpg, *.jpeg, *.jpe, *.jfif, *.png) | *.jpg; *.jpeg; *.jpe; *.jfif;" +
     " *.png";
             // 
+            // openFile_Card
+            // 
+            this.openFile_Card.Filter = "CFVG Card (*.crd) | *.crd";
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -907,6 +914,8 @@
             this.ClientSize = new System.Drawing.Size(746, 499);
             this.Controls.Add(this.ManagerTabs);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximumSize = new System.Drawing.Size(762, 538);
+            this.MinimumSize = new System.Drawing.Size(762, 538);
             this.Name = "Main";
             this.Text = "Cray Sim Manager";
             this.ManagerTabs.ResumeLayout(false);
@@ -1005,6 +1014,7 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.OpenFileDialog openFile_Images;
+        private System.Windows.Forms.OpenFileDialog openFile_Card;
     }
 }
 

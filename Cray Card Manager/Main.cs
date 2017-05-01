@@ -782,5 +782,219 @@ namespace Cray_Card_Manager
             }
 
         }
+
+        private void button_OpenCard_Click(object sender, EventArgs e)
+        {
+            if (openFile_Card.ShowDialog(this) == DialogResult.OK)
+            {
+                button_Clear_Click(sender, e);
+                using (StreamReader reader = new StreamReader(openFile_Card.FileName))
+                {
+                    //Text File into String
+                    string textFile = reader.ReadToEnd();
+
+                    stopEvent = true;
+
+                    //Each '|' represents a new parameter
+                    string[] parameters = textFile.Split('|');
+                    foreach (string parameter in parameters)
+                    {
+                        //'=' is the seperator between the key and value
+                        string[] values = parameter.Split('=');
+                        //Load based on Key
+                        switch (values[0])
+                        {
+                            case "Code":
+                                textBox_CardID.Text = values[1];
+                                break;
+                            case "Name":
+                                textBox_Name.Text = values[1];
+                                break;
+                            case "Border":
+                                switch (values[1])
+                                {
+                                    case "Normal":
+                                        comboBox_UClass.SelectedIndex = 0;
+                                        break;
+                                    case "Trigger":
+                                        comboBox_UClass.SelectedIndex = 1;
+                                        break;
+                                    case "Stride":
+                                        checkBox_NoShield.Checked = true;
+                                        comboBox_UClass.SelectedIndex = 2;
+                                        break;
+                                    case "G-Guardian":
+                                        checkBox_NoShield.Checked = false;
+                                        comboBox_UClass.SelectedIndex = 2;
+                                        numeric_Power.Value = 0;
+                                        break;
+                                }
+                                stopEvent = false;
+                                comboBox_UClass_SelectedIndexChanged(comboBox_UClass, e);
+                                stopEvent = true;
+                                break;
+                            case "Trigger":
+                                switch (values[1])
+                                {
+                                    case "Critical Trigger":
+                                        comboBox_Trigger.Text = "Critical";
+                                        break;
+                                    case "Stand Trigger":
+                                        comboBox_Trigger.Text = "Stand";
+                                        break;
+                                    case "Draw Trigger":
+                                        comboBox_Trigger.Text = "Draw";
+                                        break;
+                                    case "Heal Trigger":
+                                        comboBox_Trigger.Text = "Heal";
+                                        break;
+                                }
+                                break;
+                            case "Grade":
+                                //Convert to Decimal
+                                numeric_Grade.Value = decimal.Parse(values[1]);
+                                break;
+                            case "Power":
+                                //Convert to Decimal
+                                numeric_Power.Value = decimal.Parse(values[1]);
+                                break;
+                            case "Shield":
+                                numeric_Shield.Text = values[1];
+                                break;
+                            case "Clan":
+                                comboBox_Clan.Text = values[1];
+                                break;
+                            case "Nation":
+                                comboBox_Nation.Text = values[1];
+                                break;
+                            case "Race":
+                                comboBox_Race.Text = values[1];
+                                break;
+                            case "Illust":
+                                textBox_Illust.Text = values[1];
+                                break;
+                            case "Design":
+                                textBox_Illust.Text += (values[1] == "" ? "" : "/" + values[1]);
+                                break;
+                            case "Flavour":
+                                //Load complete flavour into textbox
+                                richTextBox_Flavour.Text = values[1];
+                                break;
+                        }
+                    }
+
+                    stopEvent = false;
+                    //End Reading
+                    reader.Close();
+                }
+            }
+        }
+
+        private void button_LoadTemplate_Click(object sender, EventArgs e)
+        {
+            string input = "";
+            stopEvent = true;
+
+            //Load Input
+            if (InputBox.Show("Copy+Paste", "Copy+Paste the Information here", ref input) == DialogResult.OK && input != "")
+            {
+                //Set Defaults
+                button_Clear_Click(sender, e);
+                checkBox_NoShield.Checked = true;
+                numeric_Shield.Value = 0;
+                numeric_Power.Value = 0;
+
+                //Get Parameters
+                string[] parameters = input.Remove(input.Length - 2, 2).Split('|');
+                foreach (string parameter in parameters)
+                {
+                    string[] values = parameter.Split('=');
+                    switch (values[0].Trim())
+                    {
+                        case "set1":
+                            textBox_CardID.Text = values[1].Split(new string[] { "<br>", "<br/>", " " }, StringSplitOptions.RemoveEmptyEntries)[0].Trim();
+                            break;
+                        case "name":
+                            textBox_Name.Text = values[1].Trim();
+                            break;
+                        case "unittype":
+                            comboBox_UClass.Text = values[1].Trim() + " Unit";
+                            break;
+                        case "style":
+                            switch (values[1].Trim())
+                            {
+                                case "gunit":
+                                    comboBox_UClass.Text = "G Unit";
+                                    break;
+                                default:
+                                    comboBox_UClass.Text = "Normal Unit";
+                                    break;
+                            }
+                            break;
+                        case "trig":
+                            comboBox_UClass.Text = "Trigger Unit";
+                            switch (values[1].Trim())
+                            {
+                                case "Draw":
+                                    comboBox_Trigger.Text = "+5000 Power, Draw 1";
+                                    break;
+                                case "Critical":
+                                    comboBox_Trigger.Text = "+5000 Power, +1 Critical";
+                                    break;
+                                case "Stand":
+                                    comboBox_Trigger.Text = "+5000, Stand";
+                                    break;
+                                case "Heal":
+                                    comboBox_Trigger.Text = "+5000 Power, Heal";
+                                    break;
+                                case "G":
+                                    comboBox_UClass.Text = "G Unit";
+                                    break;
+                            }
+                            break;
+                        case "illust":
+                            textBox_Illust.Text = values[1].Trim();
+                            break;
+                        case "Design":
+                            textBox_Illust.Text += "/" + values[1].Trim();
+                            break;
+                        case "grade":
+                            numeric_Grade.Value = int.Parse(values[1].Trim());
+                            break;
+                        case "power":
+                            numeric_Power.Value = int.Parse(values[1].Replace("+", "").Trim());
+                            break;
+                        case "shield":
+                            numeric_Shield.Value = int.Parse(values[1].Replace("+", "").Trim());
+                            break;
+                        case "clan":
+                            comboBox_Clan.SelectedIndex = 0;
+                            comboBox_Clan.Text = values[1].Trim();
+                            stopEvent = false;
+                            comboBox_Clan_SelectedIndexChanged(sender, e);
+                            stopEvent = true;
+                            break;
+                        case "race":
+                            comboBox_Race.Text = values[1].Trim();
+                            break;
+                        case "flavor":
+                            richTextBox_Flavour.Text = values[1].Replace("<br>", Environment.NewLine).Replace("<br/>", Environment.NewLine).Trim();
+                            break;
+                        case "effect":
+                            values[1] = values[1].Replace("[[", "").Replace("]]", "");
+                            string[] lines = values[1].Split(new string[] { "<br>", "<br/>" }, StringSplitOptions.RemoveEmptyEntries);
+                            richTextBox_Abilities.Text = "";
+                            foreach (string line in lines)
+                            {
+                                richTextBox_Abilities.Text += line.Trim() + Environment.NewLine;
+                            }
+                            break;
+                    }
+                }
+            }
+
+            //Finish
+            stopEvent = false;
+        }
     }
 }
